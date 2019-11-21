@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Sierpinski Dreiecke</title>
+	</head>
+	
+	<body style="background-color:#CCCCCC">
+	<canvas id="can" width="700" height="500" style="border:1px solid #000000;"></canvas>
+	<form>
+		<input type="button" value="Random Triangle" onclick="randTria();">
+		<input type="button" value="Set own Triangle" onclick="setTria();">
+	</form>
+	
+	<script>
+	
+	function setTria()
+	{
+		ctx.clearRect(0, 0, width, height);
+		canvas.addEventListener("mousedown", setPoint, false);
+	}
+	
+	function setPoint(event)
+	{
+		let rect = canvas.getBoundingClientRect();
+		var point = new Array(2);
+		point[0] = event.clientX - rect.left;
+		point[1] = event.clientY - rect.top;
+		startPoints[counter] = point;
+		
+		ctx.beginPath();
+		ctx.arc(point[0], point[1], 1, 0, 2*Math.PI);
+		ctx.stroke();
+		
+		if(counter == 2)
+		{
+			counter = 0;
+			canvas.removeEventListener("mousedown", setPoint, false);
+			isTriangle();
+		} else {
+			counter++;
+		}
+	}
+	
+	function getRandomPoint()
+	{
+		var p = [Math.random() * width, Math.random() * height];
+		return p;
+	}
+	
+	function randTria()
+	{
+		ctx.clearRect(0, 0, width, height);
+		startPoints = new Array(3);
+		startPoints[0] = getRandomPoint();
+		startPoints[1] = getRandomPoint();
+		startPoints[2] = getRandomPoint();;
+		isTriangle();
+	}
+	
+	function getHalf(first, second)
+	{
+		var half = new Array(2);
+		half[0] = (first[0] + second[0])/2;
+		half[1] = (first[1] + second[1])/2;
+		return half;
+	}
+	
+	function isTriangle()
+	{
+		var a = Math.sqrt(Math.pow(startPoints[0][0]-startPoints[1][0], 2) +Math.pow(startPoints[0][1]-startPoints[1][1], 2));
+		var b = Math.sqrt(Math.pow(startPoints[0][0]-startPoints[2][0], 2) +Math.pow(startPoints[0][1]-startPoints[2][1], 2));
+		var c = Math.sqrt(Math.pow(startPoints[2][0]-startPoints[1][0], 2) +Math.pow(startPoints[2][1]-startPoints[1][1], 2));
+		
+		if( (a+b > c) && (a+c > b) && (c+b > a))
+		{
+			calcSierpinski();
+		} else {
+			alert("Please try again, it is not a Triangle.");
+		}
+	}
+	
+	function calcSierpinski()
+	{
+		var workingPoint = getRandomPoint();
+		
+		for( var i = 0; i < steps; i++)
+		{
+			var r = Math.floor(Math.random() * 3);
+			var mit = getHalf(startPoints[r], workingPoint);
+			ctx.beginPath();
+			ctx.arc(mit[0], mit[1], 1, 0, 2*Math.PI);
+			ctx.stroke();
+			workingPoint = mit;
+		}
+	}
+	
+	//Sierpinski Dreiecke
+	var canvas = document.getElementById("can");
+	var height = canvas.height;
+	var width = canvas.width;
+	var ctx = canvas.getContext("2d");
+	var steps = 200000;
+	var startPoints = new Array(3);
+	var counter = 0;
+	
+	</script>
+	
+	
+	</body>
+
+</html>

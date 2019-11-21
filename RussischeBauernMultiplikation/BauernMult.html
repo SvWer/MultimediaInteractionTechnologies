@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Russische Bauernmultiplikation</title>
+	</head>
+	
+	<body style="background-color:#CCCCCC">
+	<form>
+		First Number <input id="first" name="first" type="text"> <br><br>
+		Second Number <input id="second" name="second" type="text"> <br><br>
+		
+		<input type="button" value="calc" onclick="calculation();"> <br><br>
+	
+	</form>
+	<style>
+		table {
+		  border-collapse: collapse;
+		  border: 1px solid black;
+		  table-layout: fixed;
+		  width: 100%; 
+		} 
+
+		th,td {
+		  border: 1px solid black;
+		  text-align: right;
+		}
+	</style>
+	<div id="table">
+	
+	
+	<script>
+	
+	//Russische Bauernmultiplikation
+	function calculation() {
+		var d = document.getElementById("table");
+		d.innerHTML = '';
+		var first = document.getElementById("first").value;
+		var second = document.getElementById("second").value;
+		var sc = second;
+		
+		var table = document.createElement('table');
+		var erg = 0;
+		//Fill the table
+		for( var i = first; i >= 1; i/=2, sc*=2)
+		{
+			if(!(Math.trunc(i)%2 == 0 && sc%2 == 0))
+			{
+				addRow(table, Math.trunc(i), sc, sc);
+				erg+= parseInt(sc);
+			} else {
+				addRow(table, Math.trunc(i), sc, " ");
+			}
+		}
+		addRow(table, "", "Ergebnis", erg);
+		
+		var d = document.getElementById("table");
+		d.appendChild(table);
+	}
+	
+	function addRow(table, val1, val2, val3)
+	{
+		var tr = document.createElement('tr');
+		addCell(tr, val1);
+		addCell(tr, val2);
+		addCell(tr, val3);
+		table.appendChild(tr);
+	}
+	
+	function addCell(row, val)
+	{
+		var td = document.createElement('td');
+		td.innerHTML = val;
+		row.appendChild(td);
+	}
+	
+	
+	</script>
+	
+	
+	</body>
+
+</html>
