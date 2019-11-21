@@ -135,18 +135,89 @@
 			beeBoundingBox.y = beePos[1] +29;
 		}
 		
+		moveBee();
+		
 		//show Bee
 		ctx.drawImage(bee, beePos[0], beePos[1], 50, 50);
-		
-		
-		
 		
 		window.requestAnimationFrame(draw);
 	}
 	
+	var direction;
+	var length = 0;
+	var speedBee;
+	
+	function moveBee()
+	{
+		if(length == 0)
+		{
+			length = Math.trunc(Math.random() * 20 + 1);
+			//console.log("len", length);
+			direction = Math.ceil(Math.random() * 4);
+			//console.log("dir", direction);
+			speedBee = Math.random() * 20;
+			//console.log("sped", speedBee);
+		} else {
+			if(direction == 1)
+			{
+				//Move horizontal
+				if(beePos[0] > width - 50)
+				{
+					direction = 3;
+				} else 
+				{
+					beePos[0] += speedBee;
+					beeBoundingBox.x += speedBee;
+				}
+				
+			} else if(direction == 2)
+			{
+				//Move vertical
+				if(beePos[1] > height - 50)
+				{
+					//console.log("true?");
+					direction = 4;
+				} else 
+				{
+					beePos[1] += speedBee;
+					beeBoundingBox.y += speedBee;
+				}
+				
+			} else if(direction == 3)
+			{
+				//Move vertical
+				if( beePos[0] < 10)
+				{
+					//console.log("true?");
+					direction = 1;
+				} else 
+				{
+					beePos[0] -= speedBee;
+					beeBoundingBox.x -= speedBee;
+				}
+				
+			} else if(direction == 4)
+			{
+				//Move vertical
+				if( beePos[1] < 10)
+				{
+					//console.log("true?");
+					direction = 2;
+				} else 
+				{
+					beePos[1] -= speedBee;
+					beeBoundingBox.y -= speedBee;
+				}
+				
+			}
+			length--;
+			//console.log("BeePos: ",beePos);
+		}
+	}
+	
 	function getRandomPoint()
 	{
-		var p = [Math.random() * width, Math.random() * height];
+		var p = [Math.random() * (width-20) + 10, Math.random() * (height-20) + 10];
 		return p;
 	}
 	
