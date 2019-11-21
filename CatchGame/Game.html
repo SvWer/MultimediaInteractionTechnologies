@@ -5,7 +5,7 @@
 	</head>
 	
 	<body style="background-color:#CCCCCC">
-	
+	<h1>Catch as many bees as posible</h1>
 	<canvas id="can" width="900" height="600" style="border:1px solid #000000;" tabindex="1"></canvas>
 	<!--<form>
 		<input type="button" value="Random Triangle" onclick="randTria();">
@@ -37,7 +37,6 @@
 	playerPos[1] = height/2;
 	var playerBoundigBox = {radius: 20, x: (10 +23), y:(height/2 +27)};
 	beePos = getRandomPoint();
-	var beeBoundingBox = {radius: 19, x:beePos[0] +29, y: beePos[1] +29};
 	
 	canvas.addEventListener("keydown", function(e) {
 			e = e || event;
@@ -123,16 +122,14 @@
 		ctx.drawImage(player, playerPos[0], playerPos[1], 50, 50);
 
 		//Calculating Collision
-		var dx = playerBoundigBox.x - beeBoundingBox.x;
-		var dy = playerBoundigBox.y - beeBoundingBox.y;
+		var dx = playerBoundigBox.x - beePos[0];
+		var dy = playerBoundigBox.y - beePos[1];
 		var distance = Math.sqrt(dx * dx + dy * dy);
 		
-		if(distance < playerBoundigBox.radius + beeBoundingBox.radius)
+		if(distance < playerBoundigBox.radius + 19)
 		{
 			score++;
 			beePos = getRandomPoint();
-			beeBoundingBox.x = beePos[0] +29;
-			beeBoundingBox.y = beePos[1] +29;
 		}
 		
 		moveBee();
@@ -153,7 +150,7 @@
 		{
 			length = Math.trunc(Math.random() * 20 + 1);
 			//console.log("len", length);
-			direction = Math.ceil(Math.random() * 4);
+			direction = Math.ceil(Math.random() * 8);
 			//console.log("dir", direction);
 			speedBee = Math.random() * 20;
 			//console.log("sped", speedBee);
@@ -167,7 +164,6 @@
 				} else 
 				{
 					beePos[0] += speedBee;
-					beeBoundingBox.x += speedBee;
 				}
 				
 			} else if(direction == 2)
@@ -180,7 +176,6 @@
 				} else 
 				{
 					beePos[1] += speedBee;
-					beeBoundingBox.y += speedBee;
 				}
 				
 			} else if(direction == 3)
@@ -193,7 +188,6 @@
 				} else 
 				{
 					beePos[0] -= speedBee;
-					beeBoundingBox.x -= speedBee;
 				}
 				
 			} else if(direction == 4)
@@ -206,10 +200,57 @@
 				} else 
 				{
 					beePos[1] -= speedBee;
-					beeBoundingBox.y -= speedBee;
 				}
 				
-			}
+			} else if(direction == 5)
+			{
+				//Move horizontal
+				if(beePos[0] > width - 50 || beePos[1] < 10)
+				{
+					direction = 3;
+				} else 
+				{
+					beePos[0] += speedBee;
+					beePos[1] -= speedBee;
+				}
+				
+			} else if(direction == 6)
+			{
+				//Move horizontal
+				if(beePos[0] > width - 50 || beePos[1] > height - 50)
+				{
+					direction = 3;
+				} else 
+				{
+					beePos[0] += speedBee;
+					beePos[1] += speedBee;
+				}
+				
+			} else if(direction == 7)
+			{
+				//Move horizontal
+				if(beePos[0] < 10 || beePos[1] > height - 50)
+				{
+					direction = 3;
+				} else 
+				{
+					beePos[0] -= speedBee;
+					beePos[1] += speedBee;
+				}
+				
+			} else if(direction == 8)
+			{
+				//Move horizontal
+				if(beePos[0] < 10 || beePos[1] < 10)
+				{
+					direction = 3;
+				} else 
+				{
+					beePos[0] -= speedBee;
+					beePos[1] -= speedBee;
+				}
+				
+			} 
 			length--;
 			//console.log("BeePos: ",beePos);
 		}
