@@ -6,19 +6,149 @@
 	
 	<body style="background-color:#CCCCCC">
 	
-	<canvas id="can" width="700" height="500" style="border:1px solid #000000;"></canvas>
-	<form>
+	<canvas id="can" width="900" height="600" style="border:1px solid #000000;" tabindex="1"></canvas>
+	<!--<form>
 		<input type="button" value="Random Triangle" onclick="randTria();">
 		<input type="button" value="Set own Triangle" onclick="setTria();">
-	</form>
+	</form>-->
 	
 	<script>
 	
-	//Sierpinski Dreiecke
-	var canvas = document.getElementById("can");
-	var height = canvas.height;
-	var width = canvas.width;
-	var ctx = canvas.getContext("2d");
+	var score = 0;
+	var keyMap = {};
+	var canvas, height, width, target, ctx;
+	var background = new Image();
+	var player = new Image();
+	var bee = new Image();
+	var speed = 10;
+	var playerPos = new Array(2);
+	var beePos;
+	
+	
+	
+	
+	canvas = document.getElementById("can");
+	height = canvas.height;
+	width = canvas.width;
+	target;
+	ctx = canvas.getContext("2d");
+	ctx.font = "20px Comic Sans MS";
+	playerPos[0] = 10;
+	playerPos[1] = height/2;
+	var playerBoundigBox = {radius: 20, x: (10 +23), y:(height/2 +27)};
+	beePos = getRandomPoint();
+	var beeBoundingBox = {radius: 19, x:beePos[0] +29, y: beePos[1] +29};
+	
+	canvas.addEventListener("keydown", function(e) {
+			e = e || event;
+			keyMap[e.keyCode] = e.type == 'keydown';
+			//console.log(keyMap);
+	});
+	
+	canvas.addEventListener("keyup", function(e) {
+			e = e || event;
+			keyMap[e.keyCode] = e.type == 'keydown';
+	});
+	draw();
+	
+	background.onload = function()
+	{
+		ctx.drawImage(background, 0, 0, width, height);
+	}
+	background.src = "background.jpg";
+	
+	player.onload = function()
+	{
+		ctx.drawImage(player, 0, 0, 30, 30);
+	}
+	player.src = "vogel.png";
+	
+	bee.onload = function()
+	{
+		ctx.drawImage(bee, 0, 0, 30, 30);
+	}
+	bee.src = "Biene.png";
+	
+		
+	function draw() 
+	{
+		//Clear Canvas
+		ctx.clearRect(0, 0, width, height);
+		//Start from back to front to draw Elements
+		ctx.drawImage(background, 0, 0, width, height);
+		
+		//Score
+		ctx.fillText("Score: "+score, 10, 25);
+		
+		//Calc PlayerPosition
+		if(keyMap[68])
+		{
+			if(playerPos[0] > width - 50)
+			{} else 
+			{
+				playerPos[0] += speed;
+				playerBoundigBox.x += speed;
+			}
+		} 
+		if(keyMap[65])
+		{
+			if(playerPos[0] < 10)
+			{} else 
+			{
+				playerPos[0] -= speed;
+				playerBoundigBox.x -= speed;
+			}
+		}
+		if(keyMap[87])
+		{
+			if(playerPos[1] < 10)
+			{} else 
+			{
+				playerPos[1] -= speed;
+				playerBoundigBox.y -= speed;
+			}
+		}
+		if(keyMap[83])
+		{
+			if(playerPos[1] > height - 50)
+			{} else 
+			{
+				playerPos[1] += speed;
+				playerBoundigBox.y += speed;
+			}
+		}
+		
+		//show Player
+		//Here needs to be checked if the image shoud rotate 
+		ctx.drawImage(player, playerPos[0], playerPos[1], 50, 50);
+
+		//Calculating Collision
+		var dx = playerBoundigBox.x - beeBoundingBox.x;
+		var dy = playerBoundigBox.y - beeBoundingBox.y;
+		var distance = Math.sqrt(dx * dx + dy * dy);
+		
+		if(distance < playerBoundigBox.radius + beeBoundingBox.radius)
+		{
+			score++;
+			beePos = getRandomPoint();
+			beeBoundingBox.x = beePos[0] +29;
+			beeBoundingBox.y = beePos[1] +29;
+		}
+		
+		//show Bee
+		ctx.drawImage(bee, beePos[0], beePos[1], 50, 50);
+		
+		
+		
+		
+		window.requestAnimationFrame(draw);
+	}
+	
+	function getRandomPoint()
+	{
+		var p = [Math.random() * width, Math.random() * height];
+		return p;
+	}
 	
 	</script>
 	
