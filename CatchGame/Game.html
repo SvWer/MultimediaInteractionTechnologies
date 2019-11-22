@@ -5,38 +5,64 @@
 	</head>
 	
 	<body style="background-color:#CCCCCC">
-	<h1>Catch as many bees as posible</h1>
+	<h1>Eat as many flies as possible</h1>
+	<h1>But don't eat the Bees</h1>
 	<canvas id="can" width="900" height="600" style="border:1px solid #000000;" tabindex="1"></canvas>
-	<!--<form>
-		<input type="button" value="Random Triangle" onclick="randTria();">
-		<input type="button" value="Set own Triangle" onclick="setTria();">
-	</form>-->
 	
 	<script>
 	
 	var score = 0;
 	var keyMap = {};
-	var canvas, height, width, target, ctx;
 	var background = new Image();
 	var player = new Image();
 	var bee = new Image();
+	var fly = new Image();
+	var heart = new Image();
 	var speed = 10;
 	var playerPos = new Array(2);
 	var beePos;
+	var spawnfly = true;
+	var lives = 3;
+	var rAF;
+	var canvas = document.getElementById("can");
+	var height = canvas.height;
+	var width = canvas.width;
+	var target;
+	var ctx = canvas.getContext("2d");
 	
-	
-	
-	
-	canvas = document.getElementById("can");
-	height = canvas.height;
-	width = canvas.width;
-	target;
-	ctx = canvas.getContext("2d");
-	ctx.font = "20px Comic Sans MS";
 	playerPos[0] = 10;
 	playerPos[1] = height/2;
-	var playerBoundigBox = {radius: 20, x: (10 +23), y:(height/2 +27)};
-	beePos = getRandomPoint();
+	flyPos = getRandomPoint();
+	var beeParameter = {length: 0, direction: 0, speed: 0};
+	var flyParameter = {length: 0, direction: 0, speed: 0};
+	
+	var boxXUpLeft = (width/2)-60;
+	var boxYUpLeft = (height/2)-50;
+	var boxWidth = 120;
+	var boxHeight = 100;
+	console.log(boxXUpLeft + " " + boxYUpLeft + " " + boxWidth + " " + boxHeight);
+	
+	background.onload = function()
+	{
+		ctx.drawImage(background, 0, 0, width, height);
+		ctx.fillStyle = "#f5d682";
+		ctx.fillRect(boxXUpLeft, boxYUpLeft, boxWidth, boxHeight);
+		ctx.fillStyle = "#000000";
+		ctx.font = "20px Comic Sans MS";
+		ctx.fillText("Press To Start", (width/2)-40, (height/2), 80, 60);
+	}
+	background.src = "background.jpg";
+	
+	canvas.addEventListener("click", function(e) {
+		var rect = canvas.getBoundingClientRect();
+		posx = e.clientX - rect.left;
+		posy = e.clientY - rect.top;
+		if(posx > boxXUpLeft && posx < boxXUpLeft + boxWidth && posy > boxYUpLeft && posy < boxYUpLeft + boxHeight)
+		{
+		console.log("Click");
+			draw();
+		}
+	});
 	
 	canvas.addEventListener("keydown", function(e) {
 			e = e || event;
@@ -48,25 +74,32 @@
 			e = e || event;
 			keyMap[e.keyCode] = e.type == 'keydown';
 	});
-	draw();
 	
-	background.onload = function()
-	{
-		ctx.drawImage(background, 0, 0, width, height);
-	}
-	background.src = "background.jpg";
+	
 	
 	player.onload = function()
 	{
-		ctx.drawImage(player, 0, 0, 30, 30);
+		//ctx.drawImage(player, 0, 0, 30, 30);
 	}
 	player.src = "vogel.png";
 	
 	bee.onload = function()
 	{
-		ctx.drawImage(bee, 0, 0, 30, 30);
+		//ctx.drawImage(bee, 0, 0, 30, 30);
 	}
 	bee.src = "Biene.png";
+	
+	fly.onload = function()
+	{
+		//ctx.drawImage(fly, 0, 0, width, height);
+	}
+	fly.src = "Fliege.png";
+	
+	heart.onload = function()
+	{
+		//ctx.drawImage(heart, 0, 0, width, height);
+	}
+	heart.src = "Herz.png";
 	
 		
 	function draw() 
@@ -86,7 +119,6 @@
 			{} else 
 			{
 				playerPos[0] += speed;
-				playerBoundigBox.x += speed;
 			}
 		} 
 		if(keyMap[65])
@@ -95,7 +127,6 @@
 			{} else 
 			{
 				playerPos[0] -= speed;
-				playerBoundigBox.x -= speed;
 			}
 		}
 		if(keyMap[87])
@@ -104,7 +135,6 @@
 			{} else 
 			{
 				playerPos[1] -= speed;
-				playerBoundigBox.y -= speed;
 			}
 		}
 		if(keyMap[83])
@@ -113,7 +143,6 @@
 			{} else 
 			{
 				playerPos[1] += speed;
-				playerBoundigBox.y += speed;
 			}
 		}
 		
@@ -122,144 +151,186 @@
 		ctx.drawImage(player, playerPos[0], playerPos[1], 50, 50);
 
 		//Calculating Collision
-		var dx = playerBoundigBox.x - beePos[0];
-		var dy = playerBoundigBox.y - beePos[1];
-		var distance = Math.sqrt(dx * dx + dy * dy);
+		flyPos = checkCollision(playerPos, flyPos, 20, 19, true);
 		
-		if(distance < playerBoundigBox.radius + 19)
-		{
-			score++;
-			beePos = getRandomPoint();
-		}
-		
-		moveBee();
+		flyParameter = moveBee(flyPos, 20, flyParameter);
 		
 		//show Bee
-		ctx.drawImage(bee, beePos[0], beePos[1], 50, 50);
+		ctx.drawImage(fly, flyPos[0], flyPos[1], 50, 50);
 		
-		window.requestAnimationFrame(draw);
+		// Spawn Flies if store bigger than 15
+		if(score > 5)
+		{
+			if(spawnfly)
+			{
+				beePos = getRandomPoint();
+				spawnfly = false;
+			}
+			ctx.drawImage(bee, beePos[0], beePos[1], 50, 50);
+			beePos = checkCollision(playerPos, beePos, 20, 19, false);
+			beeParameter = moveBee(beePos, 10, beeParameter);
+		}
+		
+		rAF = window.requestAnimationFrame(draw);
+		switch (lives) {
+			case 3: {
+					//Full Live show 3 hearts
+					ctx.drawImage(heart, (width - 180), 10, 50, 50);
+				}
+			case 2: {
+					// One Live less
+					ctx.drawImage(heart, (width - 120), 10, 50, 50);
+				}
+			case 1: {
+					// Only one live left
+					ctx.drawImage(heart, (width - 60), 10, 50, 50);
+					break;
+				}
+			case 0: {
+					//Your are Dead, you loose
+					window.cancelAnimationFrame(rAF);
+					ctx.drawImage(background, 0, 0, width, height);
+					ctx.fillStyle = "#f5d682";
+					ctx.fillRect(boxXUpLeft, boxYUpLeft, boxWidth, boxHeight);
+					ctx.fillStyle = "#000000";
+					ctx.font = "20px Comic Sans MS";
+					ctx.fillText("Retry", (width/2)-40, (height/2), 80, 60);
+					lives = 3;
+					score = 0;
+					flyPos = getRandomPoint();
+					playerPos[0] = 10;
+					playerPos[1] = height/2;
+				}
+		}
+		
+		
 	}
 	
-	var direction;
-	var length = 0;
-	var speedBee;
-	
-	function moveBee()
+	function moveBee(Pos, spe, p)
 	{
-		if(length == 0)
+		if(p.length == 0)
 		{
-			length = Math.trunc(Math.random() * 20 + 1);
+			p.length = Math.trunc(Math.random() * 20 + 1);
 			//console.log("len", length);
-			direction = Math.ceil(Math.random() * 8);
+			p.direction = Math.ceil(Math.random() * 8);
 			//console.log("dir", direction);
-			speedBee = Math.random() * 20;
+			p.speed = Math.random() * spe;
 			//console.log("sped", speedBee);
 		} else {
-			if(direction == 1)
+			if(p.direction == 1)
 			{
-				//Move horizontal
-				if(beePos[0] > width - 50)
+				if(Pos[0] > width - 50)
 				{
-					direction = 3;
+					p.direction = 3;
 				} else 
 				{
-					beePos[0] += speedBee;
+					Pos[0] += p.speed;
 				}
 				
-			} else if(direction == 2)
+			} else if(p.direction == 2)
 			{
-				//Move vertical
-				if(beePos[1] > height - 50)
+				if(Pos[1] > height - 50)
 				{
-					//console.log("true?");
-					direction = 4;
+					p.direction = 4;
 				} else 
 				{
-					beePos[1] += speedBee;
+					Pos[1] += p.speed;
 				}
 				
-			} else if(direction == 3)
+			} else if(p.direction == 3)
 			{
-				//Move vertical
-				if( beePos[0] < 10)
+				if( Pos[0] < 10)
 				{
-					//console.log("true?");
-					direction = 1;
+					p.direction = 1;
 				} else 
 				{
-					beePos[0] -= speedBee;
+					Pos[0] -= p.speed;
 				}
 				
-			} else if(direction == 4)
+			} else if(p.direction == 4)
 			{
-				//Move vertical
-				if( beePos[1] < 10)
+				if( Pos[1] < 10)
 				{
-					//console.log("true?");
-					direction = 2;
+					p.direction = 2;
 				} else 
 				{
-					beePos[1] -= speedBee;
+					Pos[1] -= p.speed;
 				}
 				
-			} else if(direction == 5)
+			} else if(p.direction == 5)
 			{
-				//Move horizontal
-				if(beePos[0] > width - 50 || beePos[1] < 10)
+				if(Pos[0] > width - 50 || Pos[1] < 10)
 				{
-					direction = 3;
+					p.direction = 3;
 				} else 
 				{
-					beePos[0] += speedBee;
-					beePos[1] -= speedBee;
+					Pos[0] += p.speed;
+					Pos[1] -= p.speed;
 				}
 				
-			} else if(direction == 6)
+			} else if(p.direction == 6)
 			{
-				//Move horizontal
-				if(beePos[0] > width - 50 || beePos[1] > height - 50)
+				if(Pos[0] > width - 50 || Pos[1] > height - 50)
 				{
-					direction = 3;
+					p.direction = 3;
 				} else 
 				{
-					beePos[0] += speedBee;
-					beePos[1] += speedBee;
+					Pos[0] += p.speed;
+					Pos[1] += p.speed;
 				}
 				
-			} else if(direction == 7)
+			} else if(p.direction == 7)
 			{
-				//Move horizontal
-				if(beePos[0] < 10 || beePos[1] > height - 50)
+				if(Pos[0] < 10 || Pos[1] > height - 50)
 				{
-					direction = 3;
+					p.direction = 3;
 				} else 
 				{
-					beePos[0] -= speedBee;
-					beePos[1] += speedBee;
+					Pos[0] -= p.speed;
+					Pos[1] += p.speed;
 				}
 				
-			} else if(direction == 8)
+			} else if(p.direction == 8)
 			{
-				//Move horizontal
-				if(beePos[0] < 10 || beePos[1] < 10)
+				if(Pos[0] < 10 || Pos[1] < 10)
 				{
-					direction = 3;
+					p.direction = 3;
 				} else 
 				{
-					beePos[0] -= speedBee;
-					beePos[1] -= speedBee;
+					Pos[0] -= p.speed;
+					Pos[1] -= p.speed;
 				}
 				
 			} 
-			length--;
-			//console.log("BeePos: ",beePos);
+			p.length = p.length -1;
 		}
+		return p;
 	}
 	
 	function getRandomPoint()
 	{
 		var p = [Math.random() * (width-20) + 10, Math.random() * (height-20) + 10];
 		return p;
+	}
+	
+	function checkCollision(eins, zwei, r1, r2, fly)
+	{
+		var dx = eins[0] - zwei[0];
+		var dy = eins[1] - zwei[1];
+		var distance = Math.sqrt(dx * dx + dy * dy);
+		
+		if(distance < r1 + r2)
+		{
+			if(fly)
+			{
+				score++;
+			}else {
+				lives--;
+			}
+			return getRandomPoint();
+		} else {
+			return zwei;
+		}
 	}
 	
 	</script>
