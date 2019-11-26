@@ -86,10 +86,24 @@
 		for( var i = 0; i < steps; i++)
 		{
 			var r = Math.floor(Math.random() * 3);
+			if(Math.trunc(r) == 0)
+			{
+				color = "#eb4034";
+			} else if ( Math.trunc(r) == 1)
+			{
+				color = "#34eb40";
+			} else if (Math.trunc(r) == 2)
+			{
+				color ="#3446eb";
+			}
+			//console.log(color);
 			var mit = getHalf(startPoints[r], workingPoint);
 			ctx.beginPath();
+			ctx.fillStyle = color;
 			ctx.arc(mit[0], mit[1], 1, 0, 2*Math.PI);
-			ctx.stroke();
+			ctx.closePath();
+			ctx.fill();
+			//ctx.stroke();
 			workingPoint = mit;
 		}
 	}
@@ -102,6 +116,7 @@
 	var steps = 200000;
 	var startPoints = new Array(3);
 	var counter = 0;
+	var color;
 	
 	</script>
 	
