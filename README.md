@@ -8,3 +8,5 @@ Die Beispiele sind:
 1. Russische Bauernmultiplikation
 2. Siespinski Dreieck, zufällig oder nach selbst definierten Punkten
 3. Ein Spiel, bei dem der Spieler über die Tastatur die Spielfigur bewegt und eine andere Figure dabei fangen muss.
+4. Ein Spiel in Python (Pong)
+5. Übungen vom 3. Dezember, die Python Grundlagen abgfragen
