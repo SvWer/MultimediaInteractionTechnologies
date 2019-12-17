@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Catch Game</title>
+	</head>
+	
+	<body style="backgroundStart-color:#CCCCCC">
+	<h1>Use the space button to fly higher and get as far as possible</h1>
+	<canvas id="can" width="900" height="600" style="border:1px solid #000000;" tabindex="1"></canvas>
+	
+	<script>
+	
+	class Hintergrund
+	{
+		pic1 = new Image()
+		pic2 = new Image()
+		scrollSpeed = 4;
+		imgWidth = width;
+		
+		constructor()
+		{
+			this.pic1.src = "bg2.jpg";
+			this.pic2.src = "bg2.jpg";
+		}
+		
+		drawbackground() 
+		{
+			ctx.drawImage(this.pic1, this.imgWidth, 0,width,height);
+			ctx.drawImage(this.pic2, this.imgWidth - width, 0,width,height);
+			this.imgWidth -= this.scrollSpeed;
+			if(this.imgWidth == 0)
+			{
+				this.imgWidth = width;
+			}
+		}
+	}
+	
+	class Player
+	{
+		pic = new Image();
+		speed = 3;
+		playerPos = new Array(2);
+		radius = 45;
+		
+		constructor()
+		{
+			this.pic.src = "plane2.png";
+			this.playerPos[0] = 30;
+			this.playerPos[1] = height /2;
+		}
+		
+		drawPlayer()
+		{
+			if(!flyhigh)
+			{
+				if(this.playerPos[1] < height-70)
+					this.playerPos[1] += this.speed;
+			} else {
+				if(this.playerPos[1] > 30)
+					this.playerPos[1] -= this.speed;
+			}
+			
+			ctx.drawImage(this.pic, this.playerPos[0], this.playerPos[1], 100,100);
+			/* Nur TEST */
+			ctx.beginPath();
+			ctx.arc(this.playerPos[0]+this.radius, this.playerPos[1]+this.radius, this.radius, 0, 2*Math.PI);
+			ctx.stroke();
+			/* TEST ENDE */
+		}
+	}
+	
+	class Hindernis
+	{
+		pic = new Image();
+		speed = 4;
+		position = new Array(4);
+		name = "";
+		
+		
+		constructor()
+		{
+			this.position[0] = width;
+			var t = Math.trunc(Math.trunc(Math.random()*2));
+			if( t == 0)
+			{
+				this.pic.src = "cloud.png";
+				this.name = "cloud";
+				var x = Math.random()*100 + 120;
+				var y = Math.random()*120 + 100;
+				this.position[1] = -90+x;
+				this.position[2] = y;
+				this.position[3] = x;
+				
+			} else {
+				this.pic.src = "mount.png";
+				this.name = "mountain";
+				var x = Math.random() *200 + 200
+				var y = Math.random() * 60 + 150;
+				this.position[1] = height-x;
+				this.position[2] = y;
+				this.position[3] = x;
+			}
+		}
+		
+		move(player)
+		{
+			ctx.drawImage(this.pic, this.position[0], this.position[1], this.position[2], this.position[3]);
+			/* Nur TEST */
+			ctx.beginPath();
+			ctx.arc(this.position[0]+this.position[2]/2, this.position[1]+ this.position[3]/2, this.position[3]/3, 0, 2*Math.PI);
+			ctx.stroke();
+			/* TEST ENDE */
+			
+			this.checkCollision(player);
+			
+			this.position[0] -= this.speed;
+			if(this.position[0] < -this.position[2])
+			{
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		checkCollision(player)
+		{
+			if(this.name == "cloud")
+			{
+				//console.log("test Cloud");
+				var dx = (this.position[0]+ this.position[2]/2) - (player.playerPos[0] +player.radius);
+				var dy = (this.position[1]+ this.position[3]/2) - (player.playerPos[1] +player.radius);
+				var distance = Math.sqrt(dx * dx + dy * dy);
+				
+				
+				if(distance < player.radius + this.position[3]/3)
+				{
+					console.log("Distance: ", distance, " ,RadiusPlay: ", player.radius, " ,RadiusHind: ", this.position[3]/3);
+					window.cancelAnimationFrame(rAF);
+					ctx.drawImage(backgroundStart, 0, 0, width, height);
+					ctx.fillStyle = "#f5d682";
+					ctx.fillRect(boxXUpLeft, boxYUpLeft, boxWidth, boxHeight);
+					ctx.fillStyle = "#000000";
+					ctx.font = "20px Comic Sans MS";
+					ctx.fillText("You lose, try again", (width/2)-40, (height/2), 80, 60);
+					return;
+				} 
+			} else if(this.name == "mountain") {
+				//console.log("How to Check Collision between circle and triangle?");
+			} else {
+				console.log("Unknown name");
+			}
+		}
+	}
+	
+	class Score{
+		meter = 0;
+		hinds = 0;
+		
+		constructor()
+		{
+			this.meter = 0;
+			this.hinds = 0;
+		}
+		
+		getMeter()
+		{
+			return meter;
+		}
+		
+		drawScore()
+		{
+			ctx.fillText(Math.trunc(this.meter/10) + " Meter", 10, 25);
+			this.meter += 1;
+			ctx.fillText(Math.trunc(this.hinds) + " Obstacles", 10, 50);
+		}
+	}
+	
+	class Game {
+		
+		bg;
+		play;
+		meter;
+		obstacles;
+	
+		constructor()
+		{
+			this.bg = new Hintergrund();
+			this.play = new Player();
+			this.meter = new Score();
+			this.obstacles = new Array();
+		}
+	}
+	
+	var rAF;
+	
+	var canvas = document.getElementById("can");
+	var height = canvas.height;
+	var width = canvas.width;
+	var ctx = canvas.getContext("2d");
+	
+	var backgroundStart = new Image();
+	var flyhigh = false;
+	
+	var game = new Game();
+	
+	var mod = Math.trunc(Math.random() * 50 + 100);
+	
+	
+	var boxXUpLeft = (width/2)-60;
+	var boxYUpLeft = (height/2)-50;
+	var boxWidth = 120;
+	var boxHeight = 100;
+	console.log(boxXUpLeft + " " + boxYUpLeft + " " + boxWidth + " " + boxHeight);
+	
+	backgroundStart.onload = function()
+	{
+		ctx.drawImage(backgroundStart, 0, 0, width, height);
+		ctx.fillStyle = "#f5d682";
+		ctx.fillRect(boxXUpLeft, boxYUpLeft, boxWidth, boxHeight);
+		ctx.fillStyle = "#000000";
+		ctx.font = "20px Comic Sans MS";
+		ctx.fillText("Press To Start", (width/2)-40, (height/2), 80, 60);
+	}
+	backgroundStart.src = "background.jpg";
+	
+	canvas.addEventListener("click", function(e) {
+		var rect = canvas.getBoundingClientRect();
+		posx = e.clientX - rect.left;
+		posy = e.clientY - rect.top;
+		console.log(posx, posy);
+		if(posx > boxXUpLeft && posx < boxXUpLeft + boxWidth && posy > boxYUpLeft && posy < boxYUpLeft + boxHeight)
+		{
+		console.log("Click");
+			game = new Game();
+			draw();
+		}
+	});
+	
+	//Check if Space is pressed
+	canvas.addEventListener("keydown", function(e) {
+			e = e || event;
+			if(e.keyCode == 32)
+			{
+				flyhigh = true;
+			}
+	});
+	
+	//Check if Space is released
+	canvas.addEventListener("keyup", function(e) {
+			e = e || event;
+			if(e.keyCode == 32)
+			{
+				flyhigh = false;
+			}
+	});
+	
+	
+	function draw() 
+	{
+		rAF = window.requestAnimationFrame(draw);
+		
+		//Clear Canvas
+		ctx.clearRect(0, 0, width, height);
+		
+		//Move and draw background;
+		game.bg.drawbackground();
+		
+		//Score
+		game.meter.drawScore();
+		if(game.meter.meter%mod == 0)
+		{
+			game.obstacles.push(new Hindernis());
+			mod = Math.trunc(Math.random() *50 + 100);
+		}
+		
+		//show Player
+		game.play.drawPlayer();
+		
+		//Move and Show Obstacles
+		for(var i = 0; i < game.obstacles.length; i++)
+		{
+			var z;
+			if(game.obstacles[i] != null)
+				z = game.obstacles[i].move(game.play);
+			if(z)
+			{
+				game.obstacles.splice(i,1);
+				game.meter.hinds++;
+			}
+		}
+	}
+	</script>
+	
+	
+	</body>
+
+</html>
