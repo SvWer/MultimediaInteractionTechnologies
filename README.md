@@ -10,3 +10,5 @@ Die Beispiele sind:
 3. Ein Spiel, bei dem der Spieler über die Tastatur die Spielfigur bewegt und eine andere Figure dabei fangen muss.
 4. Ein Spiel in Python (Pong)
 5. Übungen vom 3. Dezember, die Python Grundlagen abgfragen
+6. Ein Spiel bei dem man mit einem Flugzeug Hindernissen ausweichen muss (nicht fertig)
+7. Anwendung, bei der Kinder ihre Wünsche an vershiedene Weihnachtsmänner senden könnnen und die verschiedenen Weihnachtsmänner einer Lister aller Wünsche an sie erhalten können
