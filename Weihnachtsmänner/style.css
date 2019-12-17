@@ -1,0 +1,144 @@
+.button {
+	border-radius: 8px;
+	border: none;
+	padding: 16px 32px;
+	text-align: center;
+	font-size: 24px;
+	cursor: pointer;
+	margin: 6px 4px;
+}
+
+.buttonkid {
+	background-color: #2E8B57;
+	color: black;
+}
+
+.buttonkid:hover {
+	background-color: #3CB371;
+}
+
+.buttonSanta {
+	background-color: #DAA520;
+	color: black;
+}
+
+.buttonSanta:hover {
+	background-color: #FFD700;
+}
+
+.button1 {
+	background-color: #2E8B57;
+	color: black;
+}
+
+.button1:hover {
+	background-color: #3CB371;
+}
+
+.button2 {
+	background-color: blue;
+	color: black;
+}
+
+.button2:hover {
+	background-color: lightblue;
+}
+
+.button3 {
+	background-color: brown;
+	color: black;
+}
+
+.button3:hover {
+	background-color: gray;
+}
+
+.button4 {
+	background-color: red;
+	color: black;
+}
+
+.button4:hover {
+	background-color: orange;
+}
+
+#container {
+	position: relative;
+}
+
+#container canvas, #chooseSanta {
+	position: absolute;
+}
+
+#chooseSanta {
+	padding: 50px;
+	width: 600px;
+	height: 400px;
+}
+
+#insertPWD {
+	padding: 50px;
+	width: 600px;
+	height: 400px;
+	text-align: center;
+}
+#table {
+	padding: 50px;
+	width: 600px;
+	height: 400px;
+	text-align: center;
+}
+
+#choosePresent {
+	padding: 50px;
+	width: 600px;
+	height: 400px;
+}
+
+#chooseRole {
+	padding: 50px;
+	width: 600px;
+	height: 400px;
+	text-align: center;
+}
+
+h1 {
+	text-align: center;
+}
+
+#addPres {
+	text-align: center;
+}
+
+.button5 {
+	background-color: #2E8B57;
+	color: black;
+}
+
+.button5:hover {
+	background-color: #3CB371;
+}
+
+.back {
+	background-color: #DAA520;
+	color: black;
+}
+
+.back:hover {
+	background-color: #FFD700;
+}
+
+#back {
+	/*bottom: 0;*/
+	top: 500px;
+}
+
+table {
+	border: 1px solid #000000;
+	padding: 8px;
+}
+
+td, th {
+	border: 1px solid #000000;
+	margin:4px;
+}

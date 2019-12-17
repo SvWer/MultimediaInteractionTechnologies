@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ChristmasPresents</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+		<div id="container">
+			<canvas id="newCanvas" style="background-color:#3e82c9; height:600px; width:700px; z-index: -1;"></canvas>
+			
+			<!-- 1                       Choose If you are a kid or Santa-->
+			<div id="chooseRole" style="position: absolute; top 10px; left10px;">
+				<h1> Choose if you are a child or if you are Santa Clause </h1><br><br>
+				<button class="button buttonkid" type="button" onClick="kidK();"> I'm a Child</button><br><br>
+				<button class="button buttonSanta" type="button" onClick="santa();"> I'm Santa Clause</button>
+			</div >
+			
+			<!-- 2                       Santa has to insert his credentials -->
+			<div id="insertPWD" style="position: absolute; top 10px; left10px; display:none;">
+				<h1>Please insert your Credentials Santa</h1>
+				<br><br>
+				The First Password: <input type="password" id="santaName" name="santaName">
+				<br><br>
+				The Second Password: <input type="password" id="santaName2" name="santaName2">
+				<br><br>
+				<button class="button buttonSanta" type="button" onClick="santaLogIn();"> Go On</button>
+			</div>
+			
+			<!-- 3                      Choose Where you are from. Doesn't matter if kid or Santa, both have to choose -->
+			<div id="chooseSanta" style="position: absolute; top 10px; left10px; display:none;">
+				<h1 id="s"> Choose your Santa <h1>
+				<button class="button button1" type="button" onClick="ned();"> Netherlands<br>
+				<img src="pics/Sinterklaas.jpg" width="100" height="100"></button>
+				<button class="button button2" type="button" onClick="rus();"> Russia<br>
+				<img src="pics/vaeterchenfrost.jpg" width="100" height="100"></button> <br><br>
+				<button class="button button3" type="button" onClick="fin();"> Finland<br>
+				<img src="pics/finnish.jpg" width="100" height="100"></button>
+				<button class="button button4" type="button" onClick="usa();"> America<br>
+				<img src="pics/Santa.jpeg" width="100" height="100"></button>
+			</div>
+			
+			<!-- 4                      If you are a kid and you have choosen you Santa, write down your information and send it so Santa -->
+			<div id="choosePresent" style="position: absolute; top 10px; left10px; display:none;">
+				<div>
+					<h1>Insert a Present:</h1>
+					<br><br>
+					<form id="addPres" action="http://127.0.0.1:8081/addpresent" method="POST">
+						<select name="santa" id="santa" value="0" style="display: none">
+							<option>0<option>
+							<option>1<option>
+							<option>2<option>
+							<option>3<option>
+						<select>
+						What is your name <input type="text" id="name" name="name" value="Sven Wernikowski"><br><br>
+						How old are you <input type="text" id="age" name="age" value="7"><br><br>
+						What you like as a Present <input type="text" id="present" name="present" value="A bike"><br><br>
+						<button class="button button5" id="addBut" type="submit">Hinzufuegen</button>
+					</form>
+				</div>
+			</div>
+			
+			
+			<!-- 5                        A Button to go back to choose your Santa -->
+			<div id="back" style="position: absolute; top 10px; left10px; display:none;">
+				<button class="button back" id="backbut" type="button" onclick="backB();">Back</button>
+			</div>
+			
+			<!-- Show all Presents from one Santa (Never shown) -->
+			<div id="showWish" style="position: absolute; top 10px; left10px; display:none;">
+				<form id="wishForm" action="http://127.0.0.1:8081/showpresent" method="GET">
+					<input type="text" id="aid" name="aid" value="2"><br>
+				</form>
+			</div>
+			
+			<!-- 6                       Empty table to insert all the presents from one Santa -->
+			<div id="table" style="position: absolute; top 10px; left10px; display:none;">
+			</div>
+		</div>
+		<div id="player" style="display:none">
+		</div>
+		<script src="schnee.js"></script>
+		
+		<script>
+			var kid;
+			var back = 1;
+			var event = new Event('test');
+			var played = true;
+			
+			function ned() {
+				var div = document.getElementById("chooseSanta");
+				div.style.display = "none";
+				if(kid == true) {
+					back = 4;
+					setSanta(0);
+				} else {
+					back = 6;
+					callWishes(0);
+				}
+			}
+			
+			function rus() {
+				var div = document.getElementById("chooseSanta");
+				div.style.display = "none";
+				if(kid == true) {
+					back = 4;
+					setSanta(1);
+				} else {
+					back = 6;
+					callWishes(1);
+				}
+			}
+			
+			function fin() {
+				var div = document.getElementById("chooseSanta");
+				div.style.display = "none";
+				if(kid == true) {
+					back = 4;
+					setSanta(1);
+				} else {
+					back = 6;
+					callWishes(2);
+				}
+			}
+			
+			function usa() {
+				var div = document.getElementById("chooseSanta");
+				div.style.display = "none";
+				if(kid == true) {
+					back = 4;
+					setSanta(3);
+				} else {
+					back = 6;
+					callWishes(3);
+				}
+			}
+			
+			function setSanta(num) {
+				/*  Nederlands is 0
+					Russia is     1
+					Finland is	  2
+					America is    3
+				*/
+				var santa = document.getElementById("santa");
+				santa.value = num;
+				var but = document.getElementById("addBut");
+				var css = ".button5:hover {background-color: #3CB371;}";
+				if(num == 1) {
+					but.style.background = "blue";
+				} else if( num == 2) {
+					but.style.background = "brown";
+				}else if(num == 3) {
+					but.style.background = "red";
+				}
+				
+				but.addEventListener('mouseenter', e => {
+					if(num == 1) {
+						but.style.background = "lightblue";
+					} else if( num == 2) {
+						but.style.background = "gray";
+					}else if(num == 3) {
+						but.style.background = "orange";
+					}
+				});
+				
+				but.addEventListener('mouseleave', e => {
+					if(num == 1) {
+						but.style.background = "blue";
+					} else if( num == 2) {
+						but.style.background = "brown";
+					}else if(num == 3) {
+						but.style.background = "red";
+					}
+				});
+				
+				var div = document.getElementById("choosePresent");
+				div.style.display = "";
+				var div = document.getElementById("back");
+				div.style.display = "";
+			}
+			
+			function callWishes(num) {
+				//Set Value;
+				var k = document.getElementById("aid");
+				k.value = num;
+				
+				document.forms['wishForm'].dispatchEvent(event);
+			}
+			
+			document.forms['wishForm'].addEventListener('test', (event) => {
+			event.preventDefault();
+			var url = event.target.action + "?aid="+document.getElementById('aid').value;
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if(xhr.readyState === 4 && xhr.status == 200) {
+						//Do something with the response.
+						var res = JSON.parse(xhr.response);
+						var d = document.getElementById("table");
+						d.innerHTML = '';
+						var h1 = document.createElement('h1');
+						h1.innerHTML = "All the presents you have to deliver";
+						var table = document.createElement('table');
+						addHead(table, "Childsname", "Age of Child", "Present");
+						for(var i = 0; i < res.length; i++)
+						{
+							addRow(table,res[i].childsname, res[i].age, res[i].present);
+						}
+						d.appendChild(h1);
+						d.appendChild(table);
+						d.style.display = "";
+					}
+				}
+				xhr.open('GET', url, true);
+				xhr.send();
+			});
+			
+			function addHead(table, val1, val2, val3) {
+				var tr = document.createElement('tr');
+				
+				var td1 = document.createElement('th');
+				td1.innerHTML = val1;
+				tr.appendChild(td1);
+				
+				var td2 = document.createElement('th');
+				td2.innerHTML = val2;
+				tr.appendChild(td2);
+				
+				var td3 = document.createElement('th');
+				td3.innerHTML = val3;
+				tr.appendChild(td3);
+				
+				table.appendChild(tr);
+			}
+
+			function addRow(table, val1, val2, val3) {
+				var tr = document.createElement('tr');
+				addCell(tr, val1);
+				addCell(tr, val2);
+				addCell(tr, val3);
+				table.appendChild(tr);
+			}
+			
+			function addCell(row, val) {
+				var td = document.createElement('td');
+				td.innerHTML = val;
+				row.appendChild(td);
+			}
+			
+			function backB() {
+				if(back == 2) {
+					var div = document.getElementById("chooseRole");
+					div.style.display = "";
+					
+					var div2 = document.getElementById("insertPWD");
+					div2.style.display = "none";
+
+					var div = document.getElementById("back");
+					div.style.display = "none";
+					back = 1;
+				} else if(back == 3) {
+					var div = document.getElementById("chooseRole");
+					div.style.display = "";
+					var div = document.getElementById("chooseSanta");
+					div.style.display = "none";
+					var div = document.getElementById("back");
+					div.style.display = "none";
+					back = 1;
+					kid = 'undefined';
+				} else if(back == 4) {
+					var div = document.getElementById("chooseSanta");
+					div.style.display = "";
+					var div = document.getElementById("choosePresent");
+					div.style.display = "none";
+					back = 3;
+				} else if(back == 6) {
+					var div = document.getElementById("chooseSanta");
+					div.style.display = "";
+					var div = document.getElementById("table");
+					div.style.display = "none";
+					back = 3;
+				} else if(back == 5) {
+					var div = document.getElementById("insertPWD");
+					div.style.display = "";
+					var div = document.getElementById("chooseSanta");
+					div.style.display = "none";
+					var div = document.getElementById("back");
+					div.style.display = "";
+					back = 2;
+				}
+			}
+			
+			function kidK() {
+				if(played) {
+					audio.load();
+					audio.play();
+					played = false;
+				}
+				var div = document.getElementById("chooseRole");
+				div.style.display = "none";
+				var div = document.getElementById("chooseSanta");
+				div.style.display = "";
+				var div = document.getElementById("back");
+				div.style.display = "";
+				kid = true;
+				back = 3;
+			}
+			
+			function santaLogIn() {
+				var name = document.getElementById("santaName").value;
+				var pwd = document.getElementById("santaName2").value;
+				if(name == "santa" && pwd == "claus") {
+					var div = document.getElementById("insertPWD");
+					div.style.display = "none";
+					var div = document.getElementById("chooseSanta");
+					div.style.display = "";
+					kid = false;
+					back = 5;
+					var s = document.getElementById("s");
+					s.innerHTML = "Where are you from?";
+				} else {
+					alert("Something went Wrong!");
+				}
+			}
+			
+			function santa() {
+				if(played) {
+					audio.load();
+					audio.play();
+					played = false;
+				}
+				back = 2;
+				var div = document.getElementById("chooseRole");
+				div.style.display = "none";
+				
+				var div2 = document.getElementById("insertPWD");
+				div2.style.display = "";
+
+				var div = document.getElementById("back");
+				div.style.display = "";				
+			}
+			
+			document.forms['addPres'].addEventListener('submit', (event) => {
+			event.preventDefault();
+			fetch(event.target.action, {
+				method: 'POST',
+				mode: 'no-cors',
+				body: new URLSearchParams(new FormData(event.target)) 
+			}).then((resp) => {
+				back = 3;
+				var div = document.getElementById("chooseSanta");
+				div.style.display = "";
+				var div = document.getElementById("choosePresent");
+				div.style.display = "none";
+				alert("Present successfully send to Santa");
+			}).catch((error) => {
+				console.log(error);
+			});
+			});
+			
+			var p = document.getElementById("player");
+			var audio = document.createElement("AUDIO");
+			audio.setAttribute("id", "p");
+			audio.setAttribute("autoplay", true);
+			audio.setAttribute("controls", true);
+			p.appendChild(audio);
+			
+			var src = new Array();
+			src.push("musik/aus.mp3");
+			src.push("musik/de.mp3");
+			src.push("musik/fin.mp3");
+			src.push("musik/rum.mp3");
+			var song = Math.round(Math.random()*3);
+			
+			var s = document.createElement("source");
+			s.setAttribute("src", src[song] );
+			s.setAttribute("type", "audio/mpeg");
+			audio.appendChild(s);	
+			
+			audio.addEventListener('ended', function() {
+				song = Math.round(Math.random()*3);
+				s.setAttribute("src", src[song] );
+				audio.load();
+				audio.play();
+			})
+		</script>
+    </body>
+</html>
