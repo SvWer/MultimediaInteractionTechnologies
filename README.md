@@ -12,3 +12,4 @@ Die Beispiele sind:
 5. Übungen vom 3. Dezember, die Python Grundlagen abgfragen
 6. Ein Spiel bei dem man mit einem Flugzeug Hindernissen ausweichen muss (nicht fertig)
 7. Anwendung, bei der Kinder ihre Wünsche an vershiedene Weihnachtsmänner senden könnnen und die verschiedenen Weihnachtsmänner einer Lister aller Wünsche an sie erhalten können
+8. Zwei graphische Möglichkeiten, um Pi zu berechnen.

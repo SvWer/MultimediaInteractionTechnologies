@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Calculation of Pi</title>
+	</head>
+	
+	<body style="background-color:#CCCCCC">
+	<canvas id="can" width="700" height="500" style="border:1px solid #000000;"></canvas>
+	<p id="Values"></p>
+	<form>
+		<input type="button" value="Add 50 more Points" onclick="addPoints();">
+	</form>
+	
+	<script>
+	var canvas = document.getElementById("can");
+	var height = canvas.height;
+	var width = canvas.width;
+	var ctx = canvas.getContext("2d");
+	var paragraph = document.getElementById("Values");
+	
+	var pi = 0;
+	var hitSquare = 0;
+	var hitCircle = 0;
+	var r = Math.random()*135 + 100;
+	var square = [30, 30];
+	
+	//Draw rect
+	ctx.beginPath();
+	ctx.rect(square[0], square[1], 2*r, 2*r);
+	ctx.closePath();
+	ctx.stroke();
+	
+	//Draw Circle
+	ctx.beginPath();
+	ctx.arc(square[0]+r, square[1]+r, r, 0, 2*Math.PI);
+	ctx.closePath();
+	ctx.stroke();
+	
+	//Set Text
+	updateText();
+	
+	function addPoints() {
+		for( var i = 0; i < 50; i++) {
+			var p = getRandomPoint();
+			drawPoint(p);
+			checkInCircle(p);
+		}
+		updateText();
+	}
+	
+	function updateText() {
+		paragraph.innerHTML = "Pi is: " + 4*hitCircle/hitSquare + "<br> Points in Square: "+hitSquare+"<br> Points in Circle: "+hitCircle;
+	}
+	
+	function drawPoint(p) {
+		ctx.beginPath();
+		ctx.fillStyle = 'black';
+		ctx.arc(p[0], p[1], 1, 0, 2*Math.PI);
+		ctx.closePath();
+		ctx.fill();
+	}
+	
+	function checkInCircle(p) {
+		var dx = p[0] - (square[0]+r);
+		var dy = p[1] - (square[1]+r);
+		var distance = Math.sqrt(dx * dx + dy * dy);
+		
+		if(distance < r)
+		{
+			hitCircle++;
+			hitSquare++;
+		} else {
+			hitSquare++;
+		}
+	}
+	
+	function getRandomPoint()
+	{
+		var p = [Math.random() * 2*r+30, Math.random() * 2*r+30];
+		return p;
+	}	
+	</script>
+	
+	</body>
+
+</html>

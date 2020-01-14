@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Calculation of Pi Nr. 2</title>
+	</head>
+	<body style="background-color:#CCCCCC">
+	
+		<canvas id="canZ" width="700" height="500" style="border:1px solid #000000;"></canvas>
+		<p id="values"></p>
+		<form>
+			<input type="button" value="Add 20 more Needles" onclick="addNeedle();">
+		</form>
+		<script>
+		var canvas = document.getElementById("canZ");
+		var height = canvas.height;
+		var width = canvas.width;
+		var ctx = canvas.getContext("2d");
+		var paragraph = document.getElementById("values");
+		
+		var pi = 0;
+		var notHitLine = 0;
+		var hitLine = 0;
+		var L = Math.random()*40+10;
+		
+		//Draw Lines
+		for(var h = 0; h < height; h+=L) {
+			ctx.beginPath();
+			ctx.moveTo(0, h);
+			ctx.lineTo(width, h);
+			ctx.closePath();
+			ctx.stroke();
+		}
+		updateText();
+		
+		function addNeedle() {
+			for(var k = 0; k < 20; k++) {
+				var pBegin = getRandomPoint();
+				var r = Math.random()*360;
+				var pEnd = [pBegin[0]+L*Math.cos(r), pBegin[1]+L*Math.sin(r)];
+				checkHit(pBegin, pEnd);
+				drawNeedle(pBegin, pEnd);
+			}
+			updateText();
+		}
+		
+		function updateText() {
+			paragraph.innerHTML = "Pi is: " + 2*hitLine/notHitLine + "<br> Needles that hit not a Line: "+notHitLine+"<br> Needles that hit a Line: "+hitLine;
+		}
+		
+		function drawNeedle(b,e) {
+			ctx.beginPath();
+			ctx.moveTo(b[0], b[1]);
+			ctx.lineTo(e[0], e[1]);
+			ctx.closePath();
+			ctx.strokeStyle='red';
+			ctx.stroke();
+		}
+		
+		function checkHit(p1, p2) {
+			var mod1 = p1[1]/L;
+			var mod2 = p2[1]/L;
+			console.log(mod1, mod2);
+			if(Math.trunc(mod1) != Math.trunc(mod2)) {
+				hitLine++;
+			} else {
+				notHitLine++;
+			}
+		}
+		
+		function getRandomPoint()
+		{
+			var p = [Math.random() * width, Math.random() * height];
+			return p;
+		}	
+		
+		</script>
+	</body>
+
+</html>
